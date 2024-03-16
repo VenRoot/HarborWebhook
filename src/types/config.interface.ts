@@ -1,7 +1,7 @@
-import type { Event } from "./payload.interface";
-
-type Config = Event & {
+type Config = {
     basePath: string;
+    full_name: string;
+    tag: string;
 };
 
 type Configs = {

@@ -1,17 +1,28 @@
 interface RootObject {
-  event_type: string;
-  events: Event[];
+  type: string;
+  occur_at: number;
+  operator: string;
+  event_data: Eventdata;
 }
 
-interface Event {
-  project: string;
-  repo_name: string;
+interface Eventdata {
+  resources: Resource[];
+  repository: Repository;
+}
+
+interface Repository {
+  date_created: number;
+  name: string;
+  namespace: string;
+  repo_full_name: string;
+  repo_type: string;
+}
+
+interface Resource {
+  digest: string;
   tag: string;
-  full_name: string;
-  trigger_time: number;
-  image_id: string;
-  project_type: string;
+  resource_url: string;
 }
 
 export default RootObject;
-export { Event };
+export { Eventdata, Repository }

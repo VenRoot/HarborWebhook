@@ -17,7 +17,7 @@ app.post("/webhook/test", async (req, res) => {
     try {
         const parsedBody = parseBody(req.body);
         if("error" in parsedBody) return res.status(parsedBody.status).end();
-        const project = config.getConfigByFullNameAndTag(parsedBody.full_name, parsedBody.tag);
+        const project = config.getConfigByFullNameAndTag(parsedBody.repository.repo_full_name, parsedBody.resources[0].tag);
         if(!project) return res.status(404).end();
         res.status(200).end(JSON.stringify(project));
     }
@@ -33,7 +33,7 @@ app.post("/webhook", async (req, res) => {
     const parsedBody = parseBody(req.body);
     if("error" in parsedBody) return res.status(parsedBody.status).end();
 
-    const project = config.getConfigByFullNameAndTag(parsedBody.full_name, parsedBody.tag);
+    const project = config.getConfigByFullNameAndTag(parsedBody.repository.repo_full_name, parsedBody.resources[0].tag);
     if(!project) return res.status(404).end();
     await executeCommandAtPathCallback("docker compose pull", project.basePath);
     await executeCommandAtPathCallback("docker compose up -d", project.basePath);
@@ -51,10 +51,10 @@ app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 function parseBody (body: any) {
     if(!body) return {error: true, status: 400};
-    if(!body.events || !Array.isArray(body.events)) return {error: true, status: 400};
-    const parsedBody = (body as ProjectInterface).events[0];
+    if(!body.event_data.resources || !Array.isArray(body.event_data.resources)) return {error: true, status: 400};
+    const parsedBody = (body as ProjectInterface).event_data;
     if(!parsedBody) return {error: true, status: 400};
-    if(!parsedBody.tag || !parsedBody.full_name || !parsedBody.project || !parsedBody.repo_name) return {error: true, status: 400};
+    if(!parsedBody.resources[0].tag || !parsedBody.repository.repo_full_name) return {error: true, status: 400};
 
     return parsedBody;
 }

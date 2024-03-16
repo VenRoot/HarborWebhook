@@ -1,4 +1,3 @@
-import type { Event } from "./types/payload.interface";
 import type IConfig from "./types/config.interface";
 import type { Configs } from "./types/config.interface";
 import fs from "fs";
