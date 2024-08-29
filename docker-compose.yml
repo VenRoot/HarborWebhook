@@ -1,18 +1,11 @@
-version: '3.8'
+version: '3.9'
 
 services:
   build-service:
     build:
       context: .
-      dockerfile: Dockerfile.build
+      dockerfile: Dockerfile
     volumes:
-      - ./bin:/app/bin  # Binde das Host-Verzeichnis an den Container
-    command: ["npm", "run", "build"]  # Führe den Build-Prozess aus
-
-# Optionaler zusätzlicher Dienst für die Kompilierung
-# ohne dass der Container dauerhaft läuft
-  build:
-    image: build-service  # Verwende das bereits gebaute Image
-    volumes:
-      - ./bin:/app/bin  # Binde das Host-Verzeichnis an den Container
-    command: ["npm", "run", "build"]
+      - ./config.json:/app/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Every path to the docker containers
