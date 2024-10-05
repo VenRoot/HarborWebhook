@@ -2,6 +2,8 @@ version: '3.9'
 
 services:
   build-service:
+    ports:
+      - "${PORT}:80"
     build:
       context: .
       dockerfile: Dockerfile
