@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { exec } from "child_process";
+import fs from "fs/promises";
 import ProjectInterface from "./types/payload.interface";
 import Config from "./config";
 
@@ -19,6 +20,11 @@ app.post("/webhook/test", async (req, res) => {
         if("error" in parsedBody) return res.status(parsedBody.status).end();
         const project = config.getConfigByFullNameAndTag(parsedBody.repository.repo_full_name, parsedBody.resources[0].tag);
         if(!project) return res.status(404).end();
+        try {
+            if(!(await fs.stat(project.basePath)).isDirectory()) throw new Error();
+        } catch(e) { 
+            return res.status(500).end("Path does not exist or is mounted the wrong way. Wrong configuration?"); 
+        }
         res.status(200).end(JSON.stringify(project));
     }
     catch(err: any) {

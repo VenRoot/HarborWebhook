@@ -1,8 +1,15 @@
 type Config = {
     basePath: string;
-    full_name: string;
+    fullName: string;
     tag: string;
+    git: GitProps
 };
+
+
+type GitProps = {
+    author: string;
+    repo: string;
+}
 
 type Configs = {
     configs: Config[];

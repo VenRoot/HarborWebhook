@@ -12,7 +12,7 @@ class Config implements Configs {
     }
 
     public getConfigByFullNameAndTag(fullName: string, tag: string): IConfig | undefined {
-        return this.configs.find((config) => config.full_name === fullName && config.tag === tag);
+        return this.configs.find((config) => config.fullName === fullName && config.tag === tag);
     }
 
     public get basePath(): string {
