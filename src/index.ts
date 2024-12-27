@@ -73,6 +73,7 @@ function executeCommandAtPathCallback(command: string, path: string): Promise<vo
             }
         }).on("exit", code => {
             if (code!== 0) {
+                console.error(`Command ${command} failed!`);
                 reject(new Error(`Process exited with code ${code}`));
             }
             resolve();
