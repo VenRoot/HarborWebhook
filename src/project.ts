@@ -59,7 +59,6 @@ class Project {
     }
 
     private async downloadCompose(outputPath: string) {
-        // https://api.github.com/repos/VenRoot/MindlessMaze/contents/.gitignore
 
         const { author, repo } = this.config.git;
         const options: RequestInit = {
