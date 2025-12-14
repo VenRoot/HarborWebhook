@@ -1,18 +1,51 @@
-import type IConfig from "./types/config.interface";
-import type { Configs } from "./types/config.interface";
 import fs from "fs";
 import path from "path";
+import type ConfigType from "./types/config.interface";
 
-class Config implements Configs {
-    configs: IConfig[];
+export class ConfigService {
+    private configPath: string;
 
     constructor() {
-        const configFile = fs.readFileSync(path.resolve(process.cwd(), "config.json"), "utf8");
-        this.configs = JSON.parse(configFile);
+        this.configPath = path.resolve(process.cwd(), "config.json");
     }
 
-    public getConfigByFullNameAndTag(fullName: string, tag: string): IConfig | undefined {
-        return this.configs.find((config) => config.fullName === fullName && config.tag === tag);
+    private loadConfigs(): ConfigType[] {
+        try {
+            if (fs.existsSync(this.configPath)) {
+                const configFile = fs.readFileSync(this.configPath, "utf8");
+                return JSON.parse(configFile);
+            }
+        } catch (error) {
+            console.error("Failed to load config.json:", error);
+        }
+        return [];
+    }
+
+    private saveConfigs(configs: ConfigType[]): void {
+        try {
+            fs.writeFileSync(this.configPath, JSON.stringify(configs, null, 2), "utf8");
+        } catch (error) {
+            console.error("Failed to save config.json:", error);
+            throw error;
+        }
+    }
+
+    public getConfigByFullNameAndTag(fullName: string, tag: string): ConfigType | undefined {
+        const configs = this.loadConfigs();
+        return configs.find((config) => config.fullName === fullName && config.tag === tag);
+    }
+
+    public addOrUpdateConfig(newConfig: ConfigType): void {
+        const configs = this.loadConfigs();
+        const index = configs.findIndex(c => c.fullName === newConfig.fullName && c.tag === newConfig.tag);
+
+        if (index !== -1) {
+            configs[index] = newConfig;
+        } else {
+            configs.push(newConfig);
+        }
+
+        this.saveConfigs(configs);
     }
 
     public get basePath(): string {
@@ -20,4 +53,4 @@ class Config implements Configs {
     }
 }
 
-export default Config;
+export default ConfigService;
